@@ -52,8 +52,6 @@ class AppRoleTokenProviderTest(unittest.TestCase):
 
     def test_revoke_role(self):
         admin_client = VaultAdmin(self.vault_addr, self.vault_admin_token)
-        old_role_id = os.getenv('ROLE_ID')
-
         admin_client.revoke(self.app_name)
         with self.assertRaises(exceptions.InvalidRequest):
             TokenProvider().request_token()
@@ -63,15 +61,15 @@ class AppRoleTokenProviderTest(unittest.TestCase):
         TokenProvider().request_token()
 
     def test_revoke_role_token(self):
-        tokenProvider = TokenProvider()
-        tokenProvider.request_token()
+        token_provider = TokenProvider()
+        token_provider.request_token()
 
         admin_client = hvac.Client(self.vault_addr, self.vault_admin_token)
         role_token = os.getenv("ROLE_TOKEN")
         admin_client.revoke_token(role_token)
 
         with self.assertRaises(exceptions.Forbidden):
-            tokenProvider.request_token()
+            token_provider.request_token()
 
     #
     def test_two_clients(self):
